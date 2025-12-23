@@ -4,156 +4,240 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RéviseIA — Fiches de révision + quiz</title>
-  <meta name="description" content="Génère des fiches de révision claires + un quiz à partir de n’importe quel thème, grâce à l’IA." />
+  <meta name="description" content="Génère des fiches de révision claires + un quiz grâce à l’IA." />
+
   <style>
     :root{
-      --bg:#0b1020; --card:#121a33; --card2:#0f1630;
-      --text:#e9ecf8; --muted:#a9b2d6; --line:#24305a;
-      --accent:#7c5cff; --accent2:#26d0ce;
-      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --bg:#0b1020;
+      --text:#e9ecf8;
+      --muted:#a9b2d6;
+      --accent:#7c5cff;
+      --accent2:#26d0ce;
       --radius:18px;
       --max:1050px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      --shadow:0 18px 55px rgba(0,0,0,.45);
+      --sans:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
+
     *{box-sizing:border-box}
+
     body{
-      margin:0; font-family:var(--sans); color:var(--text);
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
       background:
-        radial-gradient(900px 500px at 15% 10%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(800px 520px at 80% 20%, rgba(38,208,206,.25), transparent 65%),
-        radial-gradient(700px 520px at 40% 90%, rgba(124,92,255,.18), transparent 60%),
+        radial-gradient(800px 400px at 10% 10%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(800px 400px at 90% 20%, rgba(38,208,206,.25), transparent 60%),
         var(--bg);
       min-height:100vh;
     }
-    a{color:inherit}
-    .wrap{max-width:var(--max); margin:0 auto; padding:28px 18px 70px}
+
+    .wrap{
+      max-width:var(--max);
+      margin:auto;
+      padding:28px 18px 60px;
+    }
+
     .topbar{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:10px 0 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:24px;
+      gap:12px;
     }
+
     .brand{
-      display:flex; align-items:center; gap:12px; text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:700;
     }
+
     .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 12px 30px rgba(124,92,255,.25);
     }
-    .brand b{font-size:15px; letter-spacing:.2px}
+
     .pill{
-      padding:8px 12px; border:1px solid rgba(255,255,255,.14);
-      border-radius:999px; color:var(--muted); font-size:12px;
-      background: rgba(255,255,255,.04);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.15);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      white-space:nowrap;
     }
 
     .hero{
-      display:grid; grid-template-columns: 1.15fr .85fr;
-      gap:18px; align-items:stretch;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
     }
-    @media (max-width: 900px){ .hero{grid-template-columns:1fr} }
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr}
+    }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
       overflow:hidden;
     }
-    .card .inner{padding:22px}
-    .h1{
-      font-size:40px; line-height:1.05; margin:6px 0 10px;
-      letter-spacing:-.6px;
-    }
-    @media (max-width: 520px){ .h1{font-size:34px} }
-    .sub{color:var(--muted); font-size:15px; line-height:1.55; margin:0 0 18px}
-    .badges{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .badge{
-      font-size:12px; color:var(--muted);
-      border:1px solid rgba(255,255,255,.12);
-      padding:8px 10px; border-radius:999px;
-      background: rgba(10,16,32,.35);
+
+    .inner{padding:22px}
+
+    h1{
+      font-size:40px;
+      margin:0 0 10px;
+      line-height:1.1;
+      letter-spacing:-.4px;
     }
 
-    form{display:grid; gap:12px; margin-top:10px}
-    .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
-    @media (max-width: 700px){ .row{grid-template-columns:1fr} }
-    label{font-size:12px; color:var(--muted)}
-    input, select, textarea{
+    .sub{
+      color:var(--muted);
+      margin:0 0 18px;
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    label{
+      font-size:12px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
+
+    input,select,textarea{
       width:100%;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(10,16,32,.35);
-      color: var(--text);
-      padding:12px 12px;
-      border-radius: 12px;
+      background:rgba(10,16,32,.4);
+      border:1px solid rgba(255,255,255,.15);
+      color:var(--text);
+      padding:12px;
+      border-radius:12px;
       outline:none;
     }
-    input:focus, select:focus, textarea:focus{
+
+    input:focus,select:focus,textarea:focus{
       border-color: rgba(124,92,255,.65);
       box-shadow: 0 0 0 4px rgba(124,92,255,.18);
     }
-    textarea{min-height:88px; resize:vertical}
-    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:2px}
-    .btn{
-      border:none; cursor:pointer;
-      padding:12px 14px; border-radius:12px;
-      font-weight:600; letter-spacing:.2px;
-      transition: transform .06s ease;
-    }
-    .btn:active{transform: translateY(1px)}
-    .primary{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color:#071022;
-    }
-    .ghost{
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
-    }
-    .hint{color:var(--muted); font-size:12px}
 
-    .side{
-      display:grid; gap:18px;
+    textarea{min-height:90px; resize:vertical}
+
+    form{display:grid;gap:12px}
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
-    .mini-title{font-size:13px; color:var(--muted); margin:0 0 10px}
-    .box{
-      background: rgba(10,16,32,.35);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      padding:16px;
+
+    @media(max-width:700px){
+      .row{grid-template-columns:1fr}
     }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius:12px;
+      padding:12px 16px;
+      font-weight:600;
+      transition:transform .06s ease;
+    }
+    button:active{transform:translateY(1px)}
+
+    .primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#06101f;
+    }
+
+    .secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.15);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+    }
+    .secondary:hover{background:rgba(255,255,255,.15)}
+
     .result{
-      white-space:pre-wrap; font-family:var(--sans);
-      line-height:1.55; font-size:14px;
+      white-space:pre-wrap;
+      line-height:1.55;
+      font-size:14px;
+      margin-top:10px;
     }
-    .mono{font-family:var(--mono); font-size:12px; color:var(--muted)}
-    footer{margin-top:26px; color:var(--muted); font-size:12px; text-align:center}
+
+    .mini-title{
+      margin:0 0 10px;
+      font-size:14px;
+    }
+
+    .history{
+      margin-top:14px;
+      padding-left:18px;
+      color:var(--muted);
+    }
+    .history li{
+      cursor:pointer;
+      margin:6px 0;
+    }
+    .history li:hover{
+      color:var(--text);
+      text-decoration:underline;
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:10px;
+      line-height:1.4;
+    }
+
+    footer{
+      text-align:center;
+      margin-top:28px;
+      font-size:12px;
+      color:var(--muted);
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
+
     <div class="topbar">
-      <a class="brand" href="#">
+      <div class="brand">
         <div class="logo" aria-hidden="true"></div>
-        <b>RéviseIA</b>
-      </a>
-      <div class="pill">GitHub Pages • v1</div>
+        RéviseIA
+      </div>
+      <div class="pill">Vercel • IA activée</div>
     </div>
 
     <div class="hero">
+
+      <!-- FORM -->
       <div class="card">
         <div class="inner">
-          <div class="badge" style="display:inline-block; margin-bottom:10px;">📚 Fiches + Quiz en 1 clic</div>
-          <h1 class="h1">Révise plus vite. <br/>Comprends mieux.</h1>
-          <p class="sub">
-            Entre un thème, choisis ton niveau, et obtiens une fiche de révision claire + un quiz.
-            (L’IA arrive juste après — d’abord, on fait une interface propre.)
-          </p>
+          <h1>Révise plus vite.<br>Comprends mieux.</h1>
+          <p class="sub">Entre un thème et obtiens une fiche + un quiz générés par l’IA.</p>
 
           <form id="genForm">
             <div>
               <label for="topic">Thème</label>
-              <input id="topic" placeholder="Ex: Les dérivées, l’ADN, la Révolution française…" required />
+              <input id="topic" placeholder="Ex : ADN, Révolution française, Intégrales…" required>
             </div>
 
             <div class="row">
@@ -165,6 +249,7 @@
                   <option>Université</option>
                 </select>
               </div>
+
               <div>
                 <label for="format">Format</label>
                 <select id="format">
@@ -177,100 +262,200 @@
 
             <div>
               <label for="details">Consignes (optionnel)</label>
-              <textarea id="details" placeholder="Ex: Fais des exemples, ajoute les formules importantes, 10 questions de quiz…"></textarea>
+              <textarea id="details" placeholder="Ajoute des exemples, formules importantes, 10 questions…"></textarea>
             </div>
 
             <div class="actions">
-              <button class="btn primary" type="submit">⚡ Générer</button>
-              <button class="btn ghost" type="button" id="demoBtn">Voir un exemple</button>
-              <span class="hint">Ensuite on branchera l’API IA.</span>
+              <button class="primary" type="submit" id="generateBtn">⚡ Générer</button>
+              <span class="small" id="status"></span>
             </div>
           </form>
-
-          <div class="badges">
-            <div class="badge">✅ Clair & structuré</div>
-            <div class="badge">✅ Exemples</div>
-            <div class="badge">✅ Quiz</div>
-            <div class="badge">✅ Copie facile</div>
-          </div>
         </div>
       </div>
 
-      <div class="side">
-        <div class="card">
-          <div class="inner">
-            <p class="mini-title">Résultat</p>
-            <div class="box">
-              <div id="output" class="result">
-Entre un thème puis clique “Générer”.
-              </div>
-            </div>
-            <p class="mono" style="margin:10px 0 0;">
-              Astuce : ton site est live sur GitHub Pages. Ensuite on pourra le rendre “IA”.
-            </p>
-          </div>
-        </div>
+      <!-- RESULT -->
+      <div class="card">
+        <div class="inner">
+          <h3 class="mini-title">Résultat</h3>
 
-        <div class="card">
-          <div class="inner">
-            <p class="mini-title">Prochaine étape</p>
-            <div class="box">
-              <b>Brancher l’IA</b>
-              <div class="hint" style="margin-top:8px;">
-                GitHub Pages ne peut pas cacher une clé API, donc on passera soit par :
-                <br/>• Vercel (recommandé), ou
-                <br/>• un backend simple (Render / Railway).
-              </div>
-            </div>
+          <div class="actions">
+            <button class="secondary" type="button" id="copyBtn">📋 Copier</button>
+            <button class="secondary" type="button" id="pdfBtn">📄 Télécharger PDF</button>
+            <button class="secondary" type="button" id="clearHistoryBtn">🧹 Effacer historique</button>
           </div>
+
+          <div id="output" class="result">Entre un thème puis clique sur “Générer”.</div>
+
+          <div class="small">
+            Astuce : clique sur un élément de l’historique pour recharger l’ancienne fiche.
+          </div>
+
+          <h4 style="margin:14px 0 8px;">Historique</h4>
+          <ul id="history" class="history"></ul>
         </div>
       </div>
+
     </div>
 
     <footer>
-      © RéviseIA — Projet perso • Déployé sur GitHub Pages
+      © RéviseIA — Projet personnel
     </footer>
   </div>
+
   <script>
-    <script>
-  const form = document.getElementById('genForm');
-  const out = document.getElementById('output');
+    const form = document.getElementById("genForm");
+    const out = document.getElementById("output");
+    const statusEl = document.getElementById("status");
+    const generateBtn = document.getElementById("generateBtn");
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    const copyBtn = document.getElementById("copyBtn");
+    const pdfBtn = document.getElementById("pdfBtn");
+    const historyList = document.getElementById("history");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 
-    const topic = document.getElementById('topic').value.trim();
-    const level = document.getElementById('level').value;
-    const format = document.getElementById('format').value;
-    const details = document.getElementById('details').value.trim();
-
-    if (!topic) {
-      out.textContent = "❌ Entre un thème.";
-      return;
+    // ===== HISTORIQUE (localStorage) =====
+    function getHistory() {
+      return JSON.parse(localStorage.getItem("reviseia_history") || "[]");
     }
 
-    out.textContent = "⏳ Génération en cours…";
+    function setHistory(items) {
+      localStorage.setItem("reviseia_history", JSON.stringify(items));
+    }
 
-    try {
-      const resp = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, level, format, details }),
-      });
+    function renderHistory() {
+      const items = getHistory();
+      historyList.innerHTML = "";
 
-      const data = await resp.json();
-
-      if (!resp.ok) {
-        out.textContent = "❌ Erreur API : " + (data.error || "inconnue");
+      if (items.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "Aucun historique pour l’instant.";
+        li.style.cursor = "default";
+        li.style.textDecoration = "none";
+        historyList.appendChild(li);
         return;
       }
 
-      out.textContent = data.text;
-    } catch (err) {
-      out.textContent = "❌ Erreur réseau : " + err.message;
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item.topic;
+        li.title = "Cliquer pour recharger";
+        li.onclick = () => {
+          out.textContent = item.content;
+          statusEl.textContent = `Rechargé : ${item.topic}`;
+        };
+        historyList.appendChild(li);
+      });
     }
-  });
-</script>
+
+    function saveToHistory(topic, content) {
+      const items = getHistory();
+      const filtered = items.filter(x => x.topic !== topic); // évite doublons sur le même thème
+      filtered.unshift({ topic, content, ts: Date.now() });
+      setHistory(filtered.slice(0, 10)); // garde les 10 derniers
+      renderHistory();
+    }
+
+    renderHistory();
+
+    clearHistoryBtn.addEventListener("click", () => {
+      setHistory([]);
+      renderHistory();
+      statusEl.textContent = "Historique effacé.";
+    });
+
+    // ===== FORM (appel IA) =====
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const topic = document.getElementById("topic").value.trim();
+      const level = document.getElementById("level").value;
+      const format = document.getElementById("format").value;
+      const details = document.getElementById("details").value.trim();
+
+      if (!topic) {
+        out.textContent = "❌ Entre un thème.";
+        return;
+      }
+
+      statusEl.textContent = "";
+      out.textContent = "⏳ Génération en cours…";
+      generateBtn.disabled = true;
+
+      try {
+        const resp = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, level, format, details })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          out.textContent = "❌ Erreur API : " + (data.error || JSON.stringify(data));
+          generateBtn.disabled = false;
+          return;
+        }
+
+        out.textContent = data.text;
+        saveToHistory(topic, data.text);
+        statusEl.textContent = "✅ Généré.";
+      } catch (err) {
+        out.textContent = "❌ Erreur réseau : " + err.message;
+      } finally {
+        generateBtn.disabled = false;
+      }
+    });
+
+    // ===== COPIER =====
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(out.textContent || "");
+        const old = copyBtn.textContent;
+        copyBtn.textContent = "✅ Copié";
+        setTimeout(() => copyBtn.textContent = old, 1200);
+      } catch {
+        statusEl.textContent = "❌ Copie impossible (navigateur).";
+      }
+    });
+
+    // ===== PDF (simple) =====
+    // Solution MVP : ouvre une fenêtre imprimable -> "Enregistrer en PDF"
+    pdfBtn.addEventListener("click", () => {
+      const content = out.textContent || "";
+      const w = window.open("", "_blank");
+      w.document.write(`
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <title>RéviseIA - Export PDF</title>
+            <style>
+              body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:24px;line-height:1.5;}
+              pre{white-space:pre-wrap;font-family:inherit;}
+              h1{margin:0 0 12px;}
+              .muted{color:#666;font-size:12px;margin-bottom:18px;}
+            </style>
+          </head>
+          <body>
+            <h1>RéviseIA</h1>
+            <div class="muted">Astuce : dans la fenêtre d’impression, choisis “Enregistrer en PDF”.</div>
+            <pre>${escapeHtml(content)}</pre>
+            <script>
+              window.onload = () => { window.print(); };
+            <\/script>
+          </body>
+        </html>
+      `);
+      w.document.close();
+    });
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
   </script>
 </body>
 </html>
