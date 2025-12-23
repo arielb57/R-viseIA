@@ -18,9 +18,7 @@
       --shadow:0 18px 55px rgba(0,0,0,.45);
       --sans:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
-
     *{box-sizing:border-box}
-
     body{
       margin:0;
       font-family:var(--sans);
@@ -31,204 +29,47 @@
         var(--bg);
       min-height:100vh;
     }
-
-    .wrap{
-      max-width:var(--max);
-      margin:auto;
-      padding:28px 18px 60px;
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:24px;
-      gap:12px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      font-weight:700;
-    }
-
-    .logo{
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 12px 30px rgba(124,92,255,.25);
-    }
-
-    .pill{
-      font-size:12px;
-      color:var(--muted);
-      border:1px solid rgba(255,255,255,.15);
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.04);
-      white-space:nowrap;
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:18px;
-    }
-
-    @media(max-width:900px){
-      .hero{grid-template-columns:1fr}
-    }
-
-    .card{
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
+    .wrap{max-width:var(--max); margin:auto; padding:28px 18px 60px;}
+    .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:12px;}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700;}
+    .logo{width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow:0 12px 30px rgba(124,92,255,.25);}
+    .pill{font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.15); padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.04); white-space:nowrap;}
+    .hero{display:grid; grid-template-columns:1.2fr .8fr; gap:18px;}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}}
+    .card{background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;}
     .inner{padding:22px}
-
-    h1{
-      font-size:40px;
-      margin:0 0 10px;
-      line-height:1.1;
-      letter-spacing:-.4px;
-    }
-
-    .sub{
-      color:var(--muted);
-      margin:0 0 18px;
-      line-height:1.55;
-      font-size:14px;
-    }
-
-    label{
-      font-size:12px;
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-    }
-
-    input,select,textarea{
-      width:100%;
-      background:rgba(10,16,32,.4);
-      border:1px solid rgba(255,255,255,.15);
-      color:var(--text);
-      padding:12px;
-      border-radius:12px;
-      outline:none;
-    }
-
-    input:focus,select:focus,textarea:focus{
-      border-color: rgba(124,92,255,.65);
-      box-shadow: 0 0 0 4px rgba(124,92,255,.18);
-    }
-
+    h1{font-size:40px; margin:0 0 10px; line-height:1.1; letter-spacing:-.4px;}
+    .sub{color:var(--muted); margin:0 0 18px; line-height:1.55; font-size:14px;}
+    label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px;}
+    input,select,textarea{width:100%; background:rgba(10,16,32,.4); border:1px solid rgba(255,255,255,.15); color:var(--text); padding:12px; border-radius:12px; outline:none;}
+    input:focus,select:focus,textarea:focus{border-color: rgba(124,92,255,.65); box-shadow: 0 0 0 4px rgba(124,92,255,.18);}
     textarea{min-height:90px; resize:vertical}
-
-    form{display:grid;gap:12px}
-
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-
-    @media(max-width:700px){
-      .row{grid-template-columns:1fr}
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    button{
-      cursor:pointer;
-      border:none;
-      border-radius:12px;
-      padding:12px 16px;
-      font-weight:600;
-      transition:transform .06s ease;
-    }
+    form{display:grid; gap:12px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width:700px){.row{grid-template-columns:1fr}}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    button{cursor:pointer; border:none; border-radius:12px; padding:12px 16px; font-weight:600; transition:transform .06s ease;}
     button:active{transform:translateY(1px)}
-
-    .primary{
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:#06101f;
-    }
-
-    .secondary{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:10px;
-      font-size:13px;
-    }
+    .primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#06101f;}
+    .secondary{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:var(--text); padding:10px 12px; border-radius:10px; font-size:13px;}
     .secondary:hover{background:rgba(255,255,255,.15)}
-
-    .result{
-      white-space:pre-wrap;
-      line-height:1.55;
-      font-size:14px;
-      margin-top:10px;
-    }
-
-    .mini-title{
-      margin:0 0 10px;
-      font-size:14px;
-    }
-
-    .history{
-      margin-top:14px;
-      padding-left:18px;
-      color:var(--muted);
-    }
-    .history li{
-      cursor:pointer;
-      margin:6px 0;
-    }
-    .history li:hover{
-      color:var(--text);
-      text-decoration:underline;
-    }
-
-    .small{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:10px;
-      line-height:1.4;
-    }
-
-    footer{
-      text-align:center;
-      margin-top:28px;
-      font-size:12px;
-      color:var(--muted);
-    }
+    .result{white-space:pre-wrap; line-height:1.55; font-size:14px; margin-top:10px;}
+    .history{margin-top:14px; padding-left:18px; color:var(--muted);}
+    .history li{cursor:pointer; margin:6px 0;}
+    .history li:hover{color:var(--text); text-decoration:underline;}
+    .small{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.4;}
+    footer{text-align:center; margin-top:28px; font-size:12px; color:var(--muted);}
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
     <div class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        RéviseIA
-      </div>
-      <div class="pill">Vercel • IA activée</div>
+      <div class="brand"><div class="logo" aria-hidden="true"></div>RéviseIA</div>
+      <div class="pill">Vercel • IA</div>
     </div>
 
     <div class="hero">
-
-      <!-- FORM -->
       <div class="card">
         <div class="inner">
           <h1>Révise plus vite.<br>Comprends mieux.</h1>
@@ -249,7 +90,6 @@
                   <option>Université</option>
                 </select>
               </div>
-
               <div>
                 <label for="format">Format</label>
                 <select id="format">
@@ -273,10 +113,9 @@
         </div>
       </div>
 
-      <!-- RESULT -->
       <div class="card">
         <div class="inner">
-          <h3 class="mini-title">Résultat</h3>
+          <h3 style="margin:0 0 10px;">Résultat</h3>
 
           <div class="actions">
             <button class="secondary" type="button" id="copyBtn">📋 Copier</button>
@@ -286,20 +125,15 @@
 
           <div id="output" class="result">Entre un thème puis clique sur “Générer”.</div>
 
-          <div class="small">
-            Astuce : clique sur un élément de l’historique pour recharger l’ancienne fiche.
-          </div>
+          <div class="small">Astuce : clique sur un élément de l’historique pour recharger.</div>
 
           <h4 style="margin:14px 0 8px;">Historique</h4>
           <ul id="history" class="history"></ul>
         </div>
       </div>
-
     </div>
 
-    <footer>
-      © RéviseIA — Projet personnel
-    </footer>
+    <footer>© RéviseIA — Projet personnel</footer>
   </div>
 
   <script>
@@ -313,20 +147,14 @@
     const historyList = document.getElementById("history");
     const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 
-    // ===== HISTORIQUE (localStorage) =====
-    function getHistory() {
-      return JSON.parse(localStorage.getItem("reviseia_history") || "[]");
-    }
+    // -------- Historique ----------
+    function getHistory(){ return JSON.parse(localStorage.getItem("reviseia_history") || "[]"); }
+    function setHistory(items){ localStorage.setItem("reviseia_history", JSON.stringify(items)); }
 
-    function setHistory(items) {
-      localStorage.setItem("reviseia_history", JSON.stringify(items));
-    }
-
-    function renderHistory() {
+    function renderHistory(){
       const items = getHistory();
       historyList.innerHTML = "";
-
-      if (items.length === 0) {
+      if(items.length === 0){
         const li = document.createElement("li");
         li.textContent = "Aucun historique pour l’instant.";
         li.style.cursor = "default";
@@ -334,11 +162,9 @@
         historyList.appendChild(li);
         return;
       }
-
-      items.forEach((item) => {
+      items.forEach(item => {
         const li = document.createElement("li");
         li.textContent = item.topic;
-        li.title = "Cliquer pour recharger";
         li.onclick = () => {
           out.textContent = item.content;
           statusEl.textContent = `Rechargé : ${item.topic}`;
@@ -347,11 +173,10 @@
       });
     }
 
-    function saveToHistory(topic, content) {
-      const items = getHistory();
-      const filtered = items.filter(x => x.topic !== topic); // évite doublons sur le même thème
-      filtered.unshift({ topic, content, ts: Date.now() });
-      setHistory(filtered.slice(0, 10)); // garde les 10 derniers
+    function saveToHistory(topic, content){
+      const items = getHistory().filter(x => x.topic !== topic);
+      items.unshift({ topic, content, ts: Date.now() });
+      setHistory(items.slice(0,10));
       renderHistory();
     }
 
@@ -363,7 +188,7 @@
       statusEl.textContent = "Historique effacé.";
     });
 
-    // ===== FORM (appel IA) =====
+    // -------- Génération ----------
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -372,89 +197,82 @@
       const format = document.getElementById("format").value;
       const details = document.getElementById("details").value.trim();
 
-      if (!topic) {
+      if(!topic){
         out.textContent = "❌ Entre un thème.";
         return;
       }
 
-      statusEl.textContent = "";
       out.textContent = "⏳ Génération en cours…";
+      statusEl.textContent = "";
       generateBtn.disabled = true;
 
-      try {
+      try{
         const resp = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
           body: JSON.stringify({ topic, level, format, details })
         });
 
-        const data = await resp.json();
+        const data = await resp.json().catch(() => ({}));
 
-        if (!resp.ok) {
-          out.textContent = "❌ Erreur API : " + (data.error || JSON.stringify(data));
+        if(!resp.ok){
+          out.textContent = "❌ Erreur API : " + (data.error || ("HTTP " + resp.status));
           generateBtn.disabled = false;
           return;
         }
 
-        out.textContent = data.text;
-        saveToHistory(topic, data.text);
+        out.textContent = data.text || "(réponse vide)";
+        saveToHistory(topic, out.textContent);
         statusEl.textContent = "✅ Généré.";
-      } catch (err) {
+      }catch(err){
         out.textContent = "❌ Erreur réseau : " + err.message;
-      } finally {
+      }finally{
         generateBtn.disabled = false;
       }
     });
 
-    // ===== COPIER =====
+    // -------- Copier ----------
     copyBtn.addEventListener("click", async () => {
-      try {
+      try{
         await navigator.clipboard.writeText(out.textContent || "");
         const old = copyBtn.textContent;
         copyBtn.textContent = "✅ Copié";
         setTimeout(() => copyBtn.textContent = old, 1200);
-      } catch {
+      }catch{
         statusEl.textContent = "❌ Copie impossible (navigateur).";
       }
     });
 
-    // ===== PDF (simple) =====
-    // Solution MVP : ouvre une fenêtre imprimable -> "Enregistrer en PDF"
+    // -------- PDF (via impression) ----------
     pdfBtn.addEventListener("click", () => {
       const content = out.textContent || "";
       const w = window.open("", "_blank");
       w.document.write(`
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <title>RéviseIA - Export PDF</title>
-            <style>
-              body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:24px;line-height:1.5;}
-              pre{white-space:pre-wrap;font-family:inherit;}
-              h1{margin:0 0 12px;}
-              .muted{color:#666;font-size:12px;margin-bottom:18px;}
-            </style>
-          </head>
-          <body>
-            <h1>RéviseIA</h1>
-            <div class="muted">Astuce : dans la fenêtre d’impression, choisis “Enregistrer en PDF”.</div>
-            <pre>${escapeHtml(content)}</pre>
-            <script>
-              window.onload = () => { window.print(); };
-            <\/script>
-          </body>
-        </html>
+        <html><head><meta charset="utf-8" />
+        <title>RéviseIA - Export PDF</title>
+        <style>
+          body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:24px;line-height:1.5;}
+          pre{white-space:pre-wrap;font-family:inherit;}
+          h1{margin:0 0 12px;}
+          .muted{color:#666;font-size:12px;margin-bottom:18px;}
+        </style></head>
+        <body>
+          <h1>RéviseIA</h1>
+          <div class="muted">Dans la fenêtre d’impression, choisis “Enregistrer en PDF”.</div>
+          <pre>${escapeHtml(content)}</pre>
+          <script>window.onload = () => window.print();<\/script>
+        </body></html>
       `);
       w.document.close();
     });
 
-    function escapeHtml(str) {
+    function escapeHtml(str){
       return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
   </script>
 </body>
