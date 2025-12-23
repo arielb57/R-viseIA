@@ -231,36 +231,44 @@ Entre un thème puis clique “Générer”.
       © RéviseIA — Projet perso • Déployé sur GitHub Pages
     </footer>
   </div>
-
   <script>
-    form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const topic = document.getElementById('topic').value.trim();
-  const level = document.getElementById('level').value;
-  const format = document.getElementById('format').value;
-  const details = document.getElementById('details').value.trim();
+  const form = document.getElementById('genForm');
+  const out = document.getElementById('output');
 
-  out.textContent = "⏳ Génération en cours…";
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  try {
-    const resp = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, level, format, details }),
-    });
+    const topic = document.getElementById('topic').value.trim();
+    const level = document.getElementById('level').value;
+    const format = document.getElementById('format').value;
+    const details = document.getElementById('details').value.trim();
 
-    const data = await resp.json();
-    if (!resp.ok) {
-      out.textContent = "❌ Erreur API : " + (data.error || JSON.stringify(data));
+    if (!topic) {
+      out.textContent = "❌ Entre un thème.";
       return;
     }
 
-    out.textContent = data.text;
-  } catch (err) {
-    out.textContent = "❌ Erreur réseau : " + err.message;
-  }
-});
-  </script>
+    out.textContent = "⏳ Génération en cours…";
+
+    try {
+      const resp = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, level, format, details }),
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        out.textContent = "❌ Erreur API : " + (data.error || "inconnue");
+        return;
+      }
+
+      out.textContent = data.text;
+    } catch (err) {
+      out.textContent = "❌ Erreur réseau : " + err.message;
+    }
+  });
   </script>
 </body>
 </html>
