@@ -1,9 +1,284 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="fr">
 <head>
-  <title>R-viseIA</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RéviseIA — Fiches de révision + quiz</title>
+  <meta name="description" content="Génère des fiches de révision claires + un quiz à partir de n’importe quel thème, grâce à l’IA." />
+  <style>
+    :root{
+      --bg:#0b1020; --card:#121a33; --card2:#0f1630;
+      --text:#e9ecf8; --muted:#a9b2d6; --line:#24305a;
+      --accent:#7c5cff; --accent2:#26d0ce;
+      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --radius:18px;
+      --max:1050px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(800px 520px at 80% 20%, rgba(38,208,206,.25), transparent 65%),
+        radial-gradient(700px 520px at 40% 90%, rgba(124,92,255,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 18px 70px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:10px 0 24px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; text-decoration:none;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+    }
+    .brand b{font-size:15px; letter-spacing:.2px}
+    .pill{
+      padding:8px 12px; border:1px solid rgba(255,255,255,.14);
+      border-radius:999px; color:var(--muted); font-size:12px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .hero{
+      display:grid; grid-template-columns: 1.15fr .85fr;
+      gap:18px; align-items:stretch;
+    }
+    @media (max-width: 900px){ .hero{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .inner{padding:22px}
+    .h1{
+      font-size:40px; line-height:1.05; margin:6px 0 10px;
+      letter-spacing:-.6px;
+    }
+    @media (max-width: 520px){ .h1{font-size:34px} }
+    .sub{color:var(--muted); font-size:15px; line-height:1.55; margin:0 0 18px}
+    .badges{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .badge{
+      font-size:12px; color:var(--muted);
+      border:1px solid rgba(255,255,255,.12);
+      padding:8px 10px; border-radius:999px;
+      background: rgba(10,16,32,.35);
+    }
+
+    form{display:grid; gap:12px; margin-top:10px}
+    .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
+    @media (max-width: 700px){ .row{grid-template-columns:1fr} }
+    label{font-size:12px; color:var(--muted)}
+    input, select, textarea{
+      width:100%;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,16,32,.35);
+      color: var(--text);
+      padding:12px 12px;
+      border-radius: 12px;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(124,92,255,.65);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.18);
+    }
+    textarea{min-height:88px; resize:vertical}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:2px}
+    .btn{
+      border:none; cursor:pointer;
+      padding:12px 14px; border-radius:12px;
+      font-weight:600; letter-spacing:.2px;
+      transition: transform .06s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .primary{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#071022;
+    }
+    .ghost{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+    }
+    .hint{color:var(--muted); font-size:12px}
+
+    .side{
+      display:grid; gap:18px;
+    }
+    .mini-title{font-size:13px; color:var(--muted); margin:0 0 10px}
+    .box{
+      background: rgba(10,16,32,.35);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding:16px;
+    }
+    .result{
+      white-space:pre-wrap; font-family:var(--sans);
+      line-height:1.55; font-size:14px;
+    }
+    .mono{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    footer{margin-top:26px; color:var(--muted); font-size:12px; text-align:center}
+  </style>
 </head>
 <body>
-  <h1>Hello GitHub 👋</h1>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="#">
+        <div class="logo" aria-hidden="true"></div>
+        <b>RéviseIA</b>
+      </a>
+      <div class="pill">GitHub Pages • v1</div>
+    </div>
+
+    <div class="hero">
+      <div class="card">
+        <div class="inner">
+          <div class="badge" style="display:inline-block; margin-bottom:10px;">📚 Fiches + Quiz en 1 clic</div>
+          <h1 class="h1">Révise plus vite. <br/>Comprends mieux.</h1>
+          <p class="sub">
+            Entre un thème, choisis ton niveau, et obtiens une fiche de révision claire + un quiz.
+            (L’IA arrive juste après — d’abord, on fait une interface propre.)
+          </p>
+
+          <form id="genForm">
+            <div>
+              <label for="topic">Thème</label>
+              <input id="topic" placeholder="Ex: Les dérivées, l’ADN, la Révolution française…" required />
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="level">Niveau</label>
+                <select id="level">
+                  <option>Collège</option>
+                  <option selected>Lycée</option>
+                  <option>Université</option>
+                </select>
+              </div>
+              <div>
+                <label for="format">Format</label>
+                <select id="format">
+                  <option selected>Fiche + Quiz</option>
+                  <option>Fiche seulement</option>
+                  <option>Quiz seulement</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="details">Consignes (optionnel)</label>
+              <textarea id="details" placeholder="Ex: Fais des exemples, ajoute les formules importantes, 10 questions de quiz…"></textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" type="submit">⚡ Générer</button>
+              <button class="btn ghost" type="button" id="demoBtn">Voir un exemple</button>
+              <span class="hint">Ensuite on branchera l’API IA.</span>
+            </div>
+          </form>
+
+          <div class="badges">
+            <div class="badge">✅ Clair & structuré</div>
+            <div class="badge">✅ Exemples</div>
+            <div class="badge">✅ Quiz</div>
+            <div class="badge">✅ Copie facile</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <div class="inner">
+            <p class="mini-title">Résultat</p>
+            <div class="box">
+              <div id="output" class="result">
+Entre un thème puis clique “Générer”.
+              </div>
+            </div>
+            <p class="mono" style="margin:10px 0 0;">
+              Astuce : ton site est live sur GitHub Pages. Ensuite on pourra le rendre “IA”.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="inner">
+            <p class="mini-title">Prochaine étape</p>
+            <div class="box">
+              <b>Brancher l’IA</b>
+              <div class="hint" style="margin-top:8px;">
+                GitHub Pages ne peut pas cacher une clé API, donc on passera soit par :
+                <br/>• Vercel (recommandé), ou
+                <br/>• un backend simple (Render / Railway).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      © RéviseIA — Projet perso • Déployé sur GitHub Pages
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('genForm');
+    const out = document.getElementById('output');
+    const demoBtn = document.getElementById('demoBtn');
+
+    function demo(theme="Les dérivées", niveau="Lycée"){
+      return `FICHE — ${theme} (${niveau})
+1) Définition
+- La dérivée mesure la variation instantanée d’une fonction.
+
+2) À connaître
+- (u+v)' = u' + v'
+- (u·v)' = u'v + uv'
+- (u/v)' = (u'v - uv') / v²
+
+3) Exemple
+- f(x)=x² → f'(x)=2x
+
+QUIZ (5)
+1) La dérivée de x³ ?
+2) Dérivée de 1/x ?
+3) (u·v)' ?
+4) Interprétation graphique de f'(a) ?
+5) Si f'(x)>0 sur I, f est… ?`;
+    }
+
+    demoBtn.addEventListener('click', () => {
+      out.textContent = demo();
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const topic = document.getElementById('topic').value.trim();
+      const level = document.getElementById('level').value;
+      const format = document.getElementById('format').value;
+      const details = document.getElementById('details').value.trim();
+
+      out.textContent =
+`✅ Demande envoyée (mode démo, sans IA)
+Thème : ${topic}
+Niveau : ${level}
+Format : ${format}
+Consignes : ${details || "—"}
+
+👉 Pour l’instant, je te montre un exemple :
+${demo(topic, level)}`;
+    });
+  </script>
 </body>
 </html>
