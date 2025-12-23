@@ -16,7 +16,7 @@
       --radius:18px;
       --max:1050px;
       --shadow:0 18px 55px rgba(0,0,0,.45);
-      --sans:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     }
     *{box-sizing:border-box}
     body{
@@ -78,13 +78,13 @@
           <form id="genForm">
             <div>
               <label for="topic">Thème</label>
-              <input id="topic" placeholder="Ex : ADN, Révolution française, Intégrales…" required>
+              <input id="topic" name="topic" placeholder="Ex : ADN, Révolution française, Intégrales…" required>
             </div>
 
             <div class="row">
               <div>
                 <label for="level">Niveau</label>
-                <select id="level">
+                <select id="level" name="level">
                   <option>Collège</option>
                   <option selected>Lycée</option>
                   <option>Université</option>
@@ -92,7 +92,7 @@
               </div>
               <div>
                 <label for="format">Format</label>
-                <select id="format">
+                <select id="format" name="format">
                   <option selected>Fiche + Quiz</option>
                   <option>Fiche seulement</option>
                   <option>Quiz seulement</option>
@@ -102,12 +102,12 @@
 
             <div>
               <label for="details">Consignes (optionnel)</label>
-              <textarea id="details" placeholder="Ajoute des exemples, formules importantes, 10 questions…"></textarea>
+              <textarea id="details" name="details" placeholder="Ajoute des exemples, formules importantes, 10 questions…"></textarea>
             </div>
 
             <div class="actions">
               <button class="primary" type="submit" id="generateBtn">⚡ Générer</button>
-              <span class="small" id="status"></span>
+              <span class="small" id="status" aria-live="polite"></span>
             </div>
           </form>
         </div>
@@ -123,7 +123,7 @@
             <button class="secondary" type="button" id="clearHistoryBtn">🧹 Effacer historique</button>
           </div>
 
-          <div id="output" class="result">Entre un thème puis clique sur “Générer”.</div>
+          <div id="output" class="result" aria-live="polite">Entre un thème puis clique sur “Générer”.</div>
 
           <div class="small">Astuce : clique sur un élément de l’historique pour recharger.</div>
 
@@ -136,7 +136,12 @@
     <footer>© RéviseIA — Projet personnel</footer>
   </div>
 
+  <!-- app logic loaded from a module so it can be tested -->
+  <script src="src/app.js"></script>
+
   <script>
+    // Small runtime glue that uses functions from src/app.js (available on window.App)
+    const App = window.App || {};
     const form = document.getElementById("genForm");
     const out = document.getElementById("output");
     const statusEl = document.getElementById("status");
@@ -147,48 +152,20 @@
     const historyList = document.getElementById("history");
     const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 
-    // -------- Historique ----------
-    function getHistory(){ return JSON.parse(localStorage.getItem("reviseia_history") || "[]"); }
-    function setHistory(items){ localStorage.setItem("reviseia_history", JSON.stringify(items)); }
-
-    function renderHistory(){
-      const items = getHistory();
-      historyList.innerHTML = "";
-      if(items.length === 0){
-        const li = document.createElement("li");
-        li.textContent = "Aucun historique pour l’instant.";
-        li.style.cursor = "default";
-        li.style.textDecoration = "none";
-        historyList.appendChild(li);
-        return;
+    function renderHistoryRuntime(){
+      if (App && App.renderHistory) {
+        App.renderHistory(historyList, out, statusEl);
       }
-      items.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item.topic;
-        li.onclick = () => {
-          out.textContent = item.content;
-          statusEl.textContent = `Rechargé : ${item.topic}`;
-        };
-        historyList.appendChild(li);
-      });
     }
 
-    function saveToHistory(topic, content){
-      const items = getHistory().filter(x => x.topic !== topic);
-      items.unshift({ topic, content, ts: Date.now() });
-      setHistory(items.slice(0,10));
-      renderHistory();
-    }
-
-    renderHistory();
+    renderHistoryRuntime();
 
     clearHistoryBtn.addEventListener("click", () => {
-      setHistory([]);
-      renderHistory();
+      if (App && App.setHistory) App.setHistory([]);
+      renderHistoryRuntime();
       statusEl.textContent = "Historique effacé.";
     });
 
-    // -------- Génération ----------
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -213,67 +190,47 @@
           body: JSON.stringify({ topic, level, format, details })
         });
 
-        const data = await resp.json().catch(() => ({}));
+        let data = {};
+        try { data = await resp.json(); } catch(e) { data = { text: await resp.text().catch(()=>"") }; }
 
         if(!resp.ok){
           out.textContent = "❌ Erreur API : " + (data.error || ("HTTP " + resp.status));
-          generateBtn.disabled = false;
           return;
         }
 
         out.textContent = data.text || "(réponse vide)";
-        saveToHistory(topic, out.textContent);
+        if (App && App.saveToHistory) App.saveToHistory(topic, out.textContent);
         statusEl.textContent = "✅ Généré.";
       }catch(err){
-        out.textContent = "❌ Erreur réseau : " + err.message;
+        out.textContent = "❌ Erreur réseau : " + (err && err.message ? err.message : err);
       }finally{
         generateBtn.disabled = false;
+        renderHistoryRuntime();
       }
     });
 
-    // -------- Copier ----------
     copyBtn.addEventListener("click", async () => {
-      try{
-        await navigator.clipboard.writeText(out.textContent || "");
-        const old = copyBtn.textContent;
-        copyBtn.textContent = "✅ Copié";
-        setTimeout(() => copyBtn.textContent = old, 1200);
-      }catch{
-        statusEl.textContent = "❌ Copie impossible (navigateur).";
+      if (window.App && window.App.copyText) {
+        const ok = await window.App.copyText(out.textContent || "");
+        if (ok) {
+          const old = copyBtn.textContent;
+          copyBtn.textContent = "✅ Copié";
+          setTimeout(() => copyBtn.textContent = old, 1200);
+        } else {
+          statusEl.textContent = "❌ Copie impossible (navigateur).";
+        }
       }
     });
 
-    // -------- PDF (via impression) ----------
     pdfBtn.addEventListener("click", () => {
       const content = out.textContent || "";
-      const w = window.open("", "_blank");
-      w.document.write(`
-        <html><head><meta charset="utf-8" />
-        <title>RéviseIA - Export PDF</title>
-        <style>
-          body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:24px;line-height:1.5;}
-          pre{white-space:pre-wrap;font-family:inherit;}
-          h1{margin:0 0 12px;}
-          .muted{color:#666;font-size:12px;margin-bottom:18px;}
-        </style></head>
-        <body>
-          <h1>RéviseIA</h1>
-          <div class="muted">Dans la fenêtre d’impression, choisis “Enregistrer en PDF”.</div>
-          <pre>${escapeHtml(content)}</pre>
-          <script>window.onload = () => window.print();<\/script>
-        </body></html>
-      `);
-      w.document.close();
+      if (window.App && window.App.openPdf) {
+        const ok = window.App.openPdf(content, window, statusEl);
+        if (!ok) {
+          statusEl.textContent = "❌ Popup bloquée. Autorise les popups pour exporter.";
+        }
+      }
     });
-
-    function escapeHtml(str){
-      return str
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
   </script>
 </body>
 </html>
