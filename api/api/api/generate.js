@@ -1,23 +1,29 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Use POST" });
-  }
+  // CORS (au cas où)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
 
   try {
     const { topic, level, format, details } = req.body || {};
     if (!topic) return res.status(400).json({ error: "Missing topic" });
 
     const prompt = `
-Tu es un prof. Génère une fiche de révision claire et structurée + un quiz.
-Thème: ${topic}
-Niveau: ${level || "Lycée"}
-Format: ${format || "Fiche + Quiz"}
-Consignes: ${details || "—"}
+Tu es un excellent professeur. Génère un contenu en FRANÇAIS.
 
-Contraintes:
-- FICHE: titres, définitions, points clés, 1-2 exemples
-- QUIZ: 8 questions (4 QCM + 4 questions ouvertes) avec corrigé à la fin
-- Réponse en français, très lisible.
+THEME: ${topic}
+NIVEAU: ${level || "Lycée"}
+FORMAT: ${format || "Fiche + Quiz"}
+CONSIGNES: ${details || "—"}
+
+Règles:
+- Le contenu doit porter uniquement sur "${topic}"
+- Structure claire: TITRES, puces, exemples
+- Si "Fiche + Quiz": fiche puis quiz puis corrigé
+- Quiz: 8 questions (4 QCM + 4 ouvertes) + corrigé
 `.trim();
 
     const r = await fetch("https://api.openai.com/v1/responses", {
@@ -33,11 +39,16 @@ Contraintes:
     });
 
     const data = await r.json();
-    if (!r.ok) return res.status(r.status).json(data);
 
-    const text = data.output_text ?? JSON.stringify(data);
-    return res.status(200).json({ text });
+    if (!r.ok) {
+      return res.status(r.status).json({
+        error: data?.error?.message || "OpenAI API error",
+        details: data,
+      });
+    }
+
+    return res.status(200).json({ text: data.output_text || "" });
   } catch (e) {
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error", details: String(e) });
   }
 }
