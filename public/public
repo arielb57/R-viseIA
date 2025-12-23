@@ -1,0 +1,6 @@
+R-viseIA/
+├─ public/
+│  ├─ index.html
+│  ├─ app.js
+├─ package.json
+├─ vercel.json
