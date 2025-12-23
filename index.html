@@ -233,52 +233,34 @@ Entre un thème puis clique “Générer”.
   </div>
 
   <script>
-    const form = document.getElementById('genForm');
-    const out = document.getElementById('output');
-    const demoBtn = document.getElementById('demoBtn');
+    form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const topic = document.getElementById('topic').value.trim();
+  const level = document.getElementById('level').value;
+  const format = document.getElementById('format').value;
+  const details = document.getElementById('details').value.trim();
 
-    function demo(theme="Les dérivées", niveau="Lycée"){
-      return `FICHE — ${theme} (${niveau})
-1) Définition
-- La dérivée mesure la variation instantanée d’une fonction.
+  out.textContent = "⏳ Génération en cours…";
 
-2) À connaître
-- (u+v)' = u' + v'
-- (u·v)' = u'v + uv'
-- (u/v)' = (u'v - uv') / v²
+  try {
+    const resp = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic, level, format, details }),
+    });
 
-3) Exemple
-- f(x)=x² → f'(x)=2x
-
-QUIZ (5)
-1) La dérivée de x³ ?
-2) Dérivée de 1/x ?
-3) (u·v)' ?
-4) Interprétation graphique de f'(a) ?
-5) Si f'(x)>0 sur I, f est… ?`;
+    const data = await resp.json();
+    if (!resp.ok) {
+      out.textContent = "❌ Erreur API : " + (data.error || JSON.stringify(data));
+      return;
     }
 
-    demoBtn.addEventListener('click', () => {
-      out.textContent = demo();
-    });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const topic = document.getElementById('topic').value.trim();
-      const level = document.getElementById('level').value;
-      const format = document.getElementById('format').value;
-      const details = document.getElementById('details').value.trim();
-
-      out.textContent =
-`✅ Demande envoyée (mode démo, sans IA)
-Thème : ${topic}
-Niveau : ${level}
-Format : ${format}
-Consignes : ${details || "—"}
-
-👉 Pour l’instant, je te montre un exemple :
-${demo(topic, level)}`;
-    });
+    out.textContent = data.text;
+  } catch (err) {
+    out.textContent = "❌ Erreur réseau : " + err.message;
+  }
+});
+  </script>
   </script>
 </body>
 </html>
